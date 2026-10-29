@@ -1,14 +1,19 @@
+
 # Dependencies / build output
-node_modules/
-*.log
-
-# OS artifacts
-.DS_Store
-Thumbs.db
-
 # Editor artifacts
-.idea/
-.vscode/
-*.swp
+# OS artifacts
+*.log
+*.pyc
 *.swo
+*.swp
 *~
+.DS_Store
+.env
+.env.*
+.idea/
+.venv/
+.vscode/
+Thumbs.db
+__pycache__/
+dist/*.tmp
+node_modules/
