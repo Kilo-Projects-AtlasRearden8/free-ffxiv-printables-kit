@@ -33,57 +33,57 @@
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 <tr>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
 <td class="blank input-cell"><input type="text"></td>
-<td class="blank input-cell"><input type="number"></td>
-<td class="blank input-cell"><input type="number"></td>
+<td class="blank input-cell"><input type="number" data-role="amount"></td>
+<td class="blank input-cell"><input type="number" data-role="balance"></td>
 </tr>
 </tbody>
 </table>
@@ -91,23 +91,66 @@
 <div class="totals">
 <div class="total-box">
 <div class="label">Total earned</div>
-<div class="value"><input type="number" style="width: 100%; border: none; font: inherit; background: transparent;"></div>
+<div class="value"><input type="number" id="total-earned" style="width: 100%; border: none; font: inherit; background: transparent;" readonly></div>
 </div>
 <div class="total-box">
 <div class="label">Total spent</div>
-<div class="value"><input type="number" style="width: 100%; border: none; font: inherit; background: transparent;"></div>
+<div class="value"><input type="number" id="total-spent" style="width: 100%; border: none; font: inherit; background: transparent;" readonly></div>
 </div>
 <div class="total-box">
 <div class="label">Current balance</div>
-<div class="value"><input type="number" style="width: 100%; border: none; font: inherit; background: transparent;"></div>
+<div class="value"><input type="number" id="current-balance" style="width: 100%; border: none; font: inherit; background: transparent;" readonly></div>
 </div>
 </div>
 
-<p class="note">Mark income as positive and expenses as negative, or use separate rows per category. Update the running balance after each entry.</p>
+<p class="note">Enter income as positive amounts and expenses as negative amounts. Totals and the running balance update automatically.</p>
 
 <footer class="footer">
 Gil Tracker &bull; FFXIV Freebies Kit &bull; Fan project, no game assets &bull; Credit: Asdale Dynamics, LLC
 </footer>
 </div>
+<script>
+(function () {
+  var rows = document.querySelectorAll('tbody tr');
+  var earnedEl = document.getElementById('total-earned');
+  var spentEl = document.getElementById('total-spent');
+  var balanceEl = document.getElementById('current-balance');
+
+  function toNum(v) {
+    var n = parseFloat(v);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function calc() {
+    var earned = 0;
+    var spent = 0;
+    var running = 0;
+
+    rows.forEach(function (row) {
+      var inputs = row.querySelectorAll('input');
+      var amount = toNum(inputs[3] && inputs[3].value);
+      var prevBalance = toNum(inputs[4] && inputs[4].value);
+
+      running += amount;
+      inputs[4].value = running;
+
+      if (amount > 0) earned += amount;
+      else spent += amount;
+    });
+
+    earnedEl.value = earned;
+    spentEl.value = spent;
+    balanceEl.value = running;
+  }
+
+  rows.forEach(function (row) {
+    row.querySelectorAll('input').forEach(function (input) {
+      input.addEventListener('input', calc);
+    });
+  });
+
+  calc();
+})();
+</script>
 </body>
 </html>

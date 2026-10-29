@@ -224,7 +224,7 @@ td.checkbox {
 }
 
 @page {
-  size: A4;
+  size: letter a4;
   margin: 1.5cm 1.5cm 1.8cm 1.5cm;
 }
 
